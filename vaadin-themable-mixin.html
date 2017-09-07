@@ -7,6 +7,20 @@
    * @polymerMixin
    */
   Vaadin.ThemableMixin = superClass => class VaadinThemableMixin extends superClass {
+    static get properties() {
+      return {
+        theme: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_propagateTheme'
+        }
+      };
+    }
+
+    _propagateTheme(theme, old) {
+      Array.prototype.forEach.call(this.root.querySelectorAll('*'), e => e._propagateTheme &&
+        (e.theme = (e.theme || '').replace(RegExp(' *' + (old || '') + '$'), '').concat(' ' + (theme || '')).trim()));
+    }
 
     static get template() {
       if (super.template && !this.hasOwnProperty('_memoizedThemableMixinTemplate')) {
@@ -46,3 +60,4 @@
 
   };
 </script>
+
